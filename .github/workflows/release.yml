@@ -1,0 +1,68 @@
+name: Release branch tree as zip
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (default: manual-<date>-<sha>)'
+        required: false
+        default: ''
+      zipname:
+        description: 'Zip base name (default: <branch>-<sha>)'
+        required: false
+        default: ''
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout selected branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepare vars
+        id: v
+        run: |
+          BR="${GITHUB_REF_NAME}"
+          SHA="$(git rev-parse --short HEAD)"
+          DATE="$(date +%Y%m%d)"
+          TAG="${{ github.event.inputs.tag }}"
+          [ -z "$TAG" ] && TAG="manual-${DATE}-${SHA}"
+          ZIP="${{ github.event.inputs.zipname }}"
+          [ -z "$ZIP" ] && ZIP="${BR}-${SHA}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "zip=$ZIP" >> "$GITHUB_OUTPUT"
+          echo "Building $ZIP from $BR @ $SHA"
+
+      - name: Zip tree (store, no recompress)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq zip > /dev/null 2>&1 || true
+          zip -0 -r "${{ steps.v.outputs.zip }}.zip" . -x ".git/*" ".github/*"
+          ls -lh "${{ steps.v.outputs.zip }}.zip"
+
+      - name: Split if over release limit
+        run: |
+          F="${{ steps.v.outputs.zip }}.zip"
+          SZ=$(stat -c%s "$F")
+          echo "size=$SZ"
+          if [ "$SZ" -gt 1900000000 ]; then
+            split -b 1900M -d "$F" "$F.part-"
+            rm "$F"
+            ls -lh "$F".part-*
+          fi
+
+      - name: Create release + upload
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.v.outputs.tag }}
+          name: ${{ steps.v.outputs.tag }}
+          body: |
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Built on demand via workflow_dispatch.
+          files: |
+            ${{ steps.v.outputs.zip }}.zip
+            ${{ steps.v.outputs.zip }}.zip.part-*
