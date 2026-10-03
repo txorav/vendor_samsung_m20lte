@@ -1,0 +1,67 @@
+#line 1 "device/samsung_slsi/sepolicy/common/vendor/property_contexts"
+### cbd
+vendor.cbd.                    u:object_r:vendor_cbd_prop:s0
+persist.vendor.cbd.            u:object_r:vendor_radio_prop:s0
+
+### radio
+ro.multisim.                   u:object_r:vendor_radio_prop:s0
+ro.vendor.multisim.            u:object_r:vendor_radio_prop:s0
+ro.vendor.radio.               u:object_r:vendor_radio_prop:s0
+
+### fastcharge
+persist.vendor.sec.fastchg_enabled     u:object_r:vendor_fastcharge_prop:s0
+
+### wifi
+vendor.wifi.                   u:object_r:vendor_wifi_prop:s0
+ro.vendor.wifi.                u:object_r:vendor_wifi_prop:s0
+#line 1 "device/samsung_slsi/sepolicy/tee/mobicore/treble/property_contexts"
+vendor.sys.mobicoredaemon.enable    u:object_r:tee_prop:s0
+#line 1 "device/samsung/universal7904-common/sepolicy/vendor/property_contexts"
+# bluetooth
+persist.bluetooth_fw_ver    u:object_r:bluetooth_prop:s0
+ro.bluetooth.tty            u:object_r:bluetooth_prop:s0
+wc_transport.               u:object_r:bluetooth_prop:s0
+
+# modemloader
+hw.revision                 u:object_r:modemloader_prop:s0
+ro.cbd.dt_revision          u:object_r:modemloader_prop:s0
+ril.cbd.dt_revision         u:object_r:modemloader_prop:s0
+ro.modemloader.done         u:object_r:modemloader_prop:s0
+
+persist.rmnet.              u:object_r:persist_rmnet_prop:s0
+persist.data.df.            u:object_r:persist_data_df_prop:s0
+persist.data.wda.           u:object_r:persist_data_wda_prop:s0
+
+# CAMERA
+persist.vendor.sys.camera.  u:object_r:vendor_camera_prop:s0
+
+# GPS
+ro.spid.gps.                u:object_r:vendor_gps_prop:s0
+
+# NFC
+vendor.nfc.fw.              u:object_r:vendor_nfc_prop:s0
+
+# RADIO
+persist.ril.                u:object_r:radio_prop:s0
+vendor.gsm.                 u:object_r:vendor_radio_prop:s0
+
+# FACTORY
+ro.factory.factory_binary   u:object_r:vendor_factory_prop:s0
+
+# wlbtd
+vendor.wlbtd.              u:object_r:vendor_wlbtd_prop:s0
+
+# Wlan
+vendor.wlan.               u:object_r:vendor_wlan_prop:s0
+
+# Hwc
+hwc.exynos.vsync_mode      u:object_r:vendor_hwc_prop:s0
+#line 1 "device/lineage/sepolicy/common/dynamic/property_contexts"
+vendor.camera.aux.packageexcludelist     u:object_r:exported_default_prop:s0
+#line 1 "device/lineage/sepolicy/common/vendor/property_contexts"
+# Aux camera whitelist prop readable to everything
+vendor.camera.aux.packagelist          u:object_r:exported_default_prop:s0
+#line 1 "system/sepolicy/reqd_mask/property_contexts"
+# empty property_contexts file - this file is used to generate an empty
+# non-platform property context for devices without any property_contexts
+# customizations.
